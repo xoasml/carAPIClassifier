@@ -9,6 +9,8 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 
+import static core.StandardizeJson.*;
+
 
 public class JSONParser {
 
@@ -34,7 +36,7 @@ public class JSONParser {
 
             while(true){
                 str = br.readLine();
-                if(str.charAt(str.length() - 1) == 'v' || str.charAt(str.length() - 1) == 'ㅍ'){
+                if(str.charAt(str.length() - 1) == 'V' || str.charAt(str.length() - 1) == 'v' || str.charAt(str.length() - 1) == 'ㅍ'){
                     if(str.indexOf('}') > -1){
                         result += "}";
                     }
@@ -73,6 +75,7 @@ public class JSONParser {
         // 3-3 데이터 상태 코드 구하기
         String stCode = getStCode(jsonObjData);
 
+        System.out.println(jsonObjData.getJSONObject("base_data").get("company_name") + "\t" + jsonObjData.getJSONObject("base_data").get("model_name"));
         System.out.println(optCnt + "\t" + imageYn + "\t" + stCode);
     }
 
@@ -137,8 +140,23 @@ public class JSONParser {
         Map<String, String> codeStorage = StCodeStorage.codeStorage();
 
         if(codeStorage.get(biCode) == null){
+
+            List<String> stanList = baseDataKeys();
+            stanList.addAll(priceDataKeys());
+            stanList.addAll(detailsDataKeys());
+
+            String codeInfo = "";
+            String[] sArr = biCode.split("");
+            for(int i = 0 ; i < stanList.size() ; i++){
+                if(sArr[i].equals("0")){
+                    codeInfo += stanList.get(i) + "null";
+                }
+            }
+
+            System.out.println(codeInfo);
             System.err.println("처음보는 유형의 이진수 코드임");
             System.err.println(biCode);
+
         } else {
             result = codeStorage.get(biCode);
         }
